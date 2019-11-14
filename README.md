@@ -11,6 +11,15 @@ To install, download or clone the repo, then:
 `npm install`
 `truffle compile`
 
+Note that the following versions were used with success at the time of this commit:
+`Truffle v5.0.43`
+`Solidity ^0.4.26;`
+
+CRITICAL: there is a bug in Webpack, when you npm install you will need to take the following steps after downloading the packages:
+`1. navigate to node_modules > webpack-dev-server > bin > webpack-dev-server.js`
+`2. change line 84 to: require('webpack-cli/bin/config/config-yargs')(yargs);`
+`3. change line 92 to: const config = require('webpack-cli/bin/utils/convert-argv')(yargs, argv, {`
+
 ## Develop Client
 
 To run truffle tests:
@@ -21,6 +30,9 @@ To run truffle tests:
 To use the dapp:
 
 `truffle migrate`
+or
+`truffle migrate --reset`
+and then
 `npm run dapp`
 
 To view dapp:
