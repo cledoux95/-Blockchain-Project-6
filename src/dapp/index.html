@@ -20,12 +20,90 @@
     </nav>
 
     <main class="container">
+        <div id="display-wrapper" class="mb-2">
+        </div>
 
-        <div id="display-wrapper" class="top-20">
+        <div class="mb-2">
+            <h3>Purchase Insurance</h3>
+                <form class="form-inline">
+                    <div class="form-row">
+                        <label for="passengers" class="mr-sm-2">Select Passenger</label>
+                        <select class="form-control" id="passengers"></select>
+                    </div>
+
+                    <div class="form-row">
+                        <label for="airlines" class="mr-sm-2">Select Airline</label>
+                        <select class="form-control" id="airlines"></select> 
+                    </div>
+
+                    <div class="form-row">
+                        <label for="flightNumbers" class="mr-sm-2">Select Flight Number</label>
+                        <select class="form-control" id="flightNumbers"></select>
+                    </div>
+
+                    <div class="form-row">
+                        <label for="datepicker" class="mr-sm-2">Select Date of Flight</label>             
+                        <input id="datepicker" class="form-control" width="276" type="date" min="2019-01-01"/>
+                    </div>
+
+                    <div class="form-row">
+                        <label for="insuranceAmount" class="mr-sm-2">Insured Amount</label> 
+                        <input type="number" min=".000000000000000001" max="1" class="form-control" id="insuranceAmount"><b>Ether</b>
+                    </div>
+
+                    <div class="form-row">
+                        <btn class="btn btn-primary" id="buyInsurance">Buy Insurance</btn>
+                    </div>
+
+                    <div class="form-row">
+                        <btn class="btn btn-primary" id="checkStatus">Check Flight Status</btn>
+                    </div>
+                    
+
+                </form>
         </div>
-        <div class="row top-20">
-            <label class="form">Flight</label> <input type="text" id="flight-number"> <btn class="btn btn-primary" id="submit-oracle">Submit to Oracles</btn>
+
+        <div class="mb-2">
+            <h3>Check Balance</h3>
+            <form class="form-inline">
+
+                <div class="form-row">
+                    <label for="passengersBalance" class="mr-sm-2">Select Passenger</label>
+                    <select class="form-control" id="passengersBalance"></select>
+                </div>
+
+                <div class="form-row">
+                    <btn class="btn btn-primary" id="checkBalance">Check Balance</btn>
+                </div>
+
+                <div class="form-row">
+                    <label for="passengerBalance" class="mr-sm-2">Balance</label>
+                    <input type="text" class="form-control" id="passengerBalance" readonly><b>Ether</b>
+                </div>
+
+            </form> 
         </div>
+
+        <div class="mb-2">
+            <h3>Withdraw</h3>
+            <form class="form-inline">
+
+                <div class="form-row">
+                    <label for="passengersWithdrawal" class="mr-sm-2">Select Passenger</label>
+                    <select class="form-control" id="passengersWithdrawal"></select>
+                </div>
+                
+                <div class="form-row">
+                    <label for="withdrawalAmount" class="mr-sm-2">Withdrawal Amount</label> 
+                    <input type="number" min=".000000000000000001" max="1" class="form-control" id="withdrawalAmount"><b>Ether</b>
+                </div>
+
+                <div class="form-row">
+                    <btn class="btn btn-primary" id="withdrawFunds">Withdraw</btn>
+                </div>
+            </form>
+        </div>
+
     </main>
 
 </body>

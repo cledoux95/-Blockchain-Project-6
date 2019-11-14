@@ -17,8 +17,11 @@ Note that the following versions were used with success at the time of this comm
 
 CRITICAL: there is a bug in Webpack, when you npm install you will need to take the following steps after downloading the packages:
 `1. navigate to node_modules > webpack-dev-server > bin > webpack-dev-server.js`
+
 `2. change line 84 to: require('webpack-cli/bin/config/config-yargs')(yargs);`
+
 `3. change line 92 to: const config = require('webpack-cli/bin/utils/convert-argv')(yargs, argv, {`
+
 
 ## Develop Client
 

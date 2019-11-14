@@ -7,7 +7,7 @@ contract('Flight Surety Tests', async (accounts) => {
   var config;
   before('setup contract', async () => {
     config = await Test.Config(accounts);
-    await config.flightSuretyData.authorizeCaller(config.flightSuretyApp.address);
+    await config.flightSuretyData.authorizeContract(config.flightSuretyApp.address);
   });
 
   /****************************************************************************************/
@@ -78,17 +78,118 @@ contract('Flight Surety Tests', async (accounts) => {
 
     // ACT
     try {
-        await config.flightSuretyApp.registerAirline(newAirline, {from: config.firstAirline});
+        await config.flightSuretyApp.callRegisterAirline(newAirline, {from: config.firstAirline});
     }
     catch(e) {
 
     }
-    let result = await config.flightSuretyData.isAirline.call(newAirline); 
+    let result = await config.flightSuretyData.isRegisteredAirline.call(newAirline); 
 
     // ASSERT
     assert.equal(result, false, "Airline should not be able to register another airline if it hasn't provided funding");
 
   });
+
+  // ADDED TESTS
+
+  it('(airline) cannot register an Airline unless already registered', async () => {
+    
+    // ARRANGE
+    let newAirline = accounts[3];
+    let unregisteredAirline = accounts[2];
+
+    // ACT
+    try {
+        await config.flightSuretyApp.callRegisterAirline(newAirline, {from: config.unregisteredAirline});
+    }
+    catch(e) {
+
+    }
+    let result = await config.flightSuretyData.isRegisteredAirline.call(newAirline); 
+
+    // ASSERT
+    assert.equal(result, false, "Airline should not be able to register another airline if it hasn't provided funding");
+
+  });
+
+  it('(airline) can register an Airline once registered and adequately funded', async () => {
+    
+    // ARRANGE
+    let newAirline = accounts[2];
+    let fee = await config.flightSuretyApp.MIN_FUNDING_AMOUNT.call();
+
+    // ACT
+    try {
+        await config.flightSuretyApp.callFundAirline({value: fee, from: config.firstAirline, nonce: await web3.eth.getTransactionCount(config.firstAirline)});
+    }
+    catch(e) {
+        console.log(e);
+    }
+
+    try {
+        await config.flightSuretyApp.callGetAirlineBalance(config.firstAirline);
+    }
+    catch(e) {
+        console.log(e);
+    }
+
+    try {
+        await config.flightSuretyApp.callRegisterAirline(newAirline, {from: config.firstAirline, nonce: await web3.eth.getTransactionCount(config.firstAirline)});
+    }
+    catch(e) {
+        console.log(e);
+    }
+    
+    let result = await config.flightSuretyData.isRegisteredAirline.call(newAirline); 
+
+    // ASSERT
+    assert.equal(result, true, "Airline should be able to register another airline if it has provided adequate funding");
+
+  });
  
+  it('(airline) cannot register airlines by itself after multiparty limitation reached', async () => {
+    
+    // ARRANGE
+    let limit = (await config.flightSuretyApp.MULTIPARTY_CONSENSUS_COUNT.call()).toString();
+ 
+    // ACT
+    try {
+        for(a = 3; a <= 5; a++) {
+            await config.flightSuretyApp.callRegisterAirline(accounts[a], {from: config.firstAirline, nonce: await web3.eth.getTransactionCount(config.firstAirline)});
+        }
+    }
+    catch(e) {
+        console.log(e);
+    }
+    
+    let result = await config.flightSuretyApp.callGetAirlines(); 
+
+    // ASSERT
+    assert.equal(result.length == limit, true, "Airline should not be able to register another airline by itself past the multiparty limitation");
+
+  });
+
+  it('(airline) can register airlines after multiparty limitation once other airlines vote for that airline', async () => {
+    
+    // ARRANGE
+    let limit = (await config.flightSuretyApp.MULTIPARTY_CONSENSUS_COUNT.call()).toString();
+    let fee = await config.flightSuretyApp.MIN_FUNDING_AMOUNT.call();
+ 
+    // ACT
+    try {
+        await config.flightSuretyApp.callFundAirline({value: fee, from: accounts[3], nonce: await web3.eth.getTransactionCount(accounts[3])});
+        await config.flightSuretyApp.callRegisterAirline(accounts[5], {from: accounts[3], nonce: await web3.eth.getTransactionCount(accounts[3])});
+
+    }
+    catch(e) {
+        console.log(e);
+    }
+
+    let result = await config.flightSuretyApp.callGetAirlines(); 
+    
+    // ASSERT
+    assert.equal(result.length > limit, true, "Airline should be able to be registered past the multiparty limitation with multiple votes");
+
+  });
 
 });
